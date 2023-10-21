@@ -1,0 +1,5 @@
+jfopp001 {'username': 'jfopp001', 'first': 'jakeFOPPES', 'last': 'FOPPES', 'phone': '2342342'}
+time {'username': 'time', 'first': 'tim', 'last': 'burton', 'phone': '321413123'}
+sdfsdf {'username': 'sdfsdf', 'first': 'asdasd', 'last': 'sdf', 'phone': 'wfsd'}
+asdasd {'username': 'asdasd', 'first': 'asdasd', 'last': 'asdasd', 'phone': 'asdasd'}
+tturner {'username': 'tturner', 'first': 'Timy', 'last': 'Turner', 'phone': '5555555555'}
