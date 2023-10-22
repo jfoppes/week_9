@@ -7,3 +7,7 @@ site6
 site7
 megasite
 ultra-megasite
+Website
+Bluesite
+Greensite
+treesite

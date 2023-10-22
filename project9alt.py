@@ -3,28 +3,26 @@ from tkinter import ttk
 import midterm as mid
 import os
 import json
-auth_usr = {"username":"", "first":"", "last":"", "phone":""}
+
 auth_usrInfo = {"username":"", "first":"", "last":"", "phone":""} # dictionary of autherized user info 
 owd = os.getcwd()
-allsites = []# Defeine sites and reservations 
-available = []
-reserved = {}
-
-with open("allsites.txt") as alls: #import allsites list from file
-    for line in alls:
-        allsites.append(line.rstrip()) 
-        
-with open("reservations.txt", "r") as rezis: #Import reserved sites list from file 
-    for line in rezis:
-        line = line.rstrip()
-        (s,u) = line.split(" ", 1)
-        reserved[(s)]=u # update site dictionary with site as key and person who reved as value
-available = list(set(allsites) - set(reserved.keys())) #the diffenrce between all sites and reserved sites is avaible sites 
-
 
 LARGE_FONT =("Verdona", 12)
 class CampReziApp(tk.Tk): # this is the parent class for the application itself, hower it takes tk.Tk as a parent to initialze an instace of tkinter 
-    
+    allsites = []# Defeine sites and reservations 
+    available = []
+    reserved = {}
+    auth_usr = {"first":""}
+    with open("allsites.txt") as alls: #import allsites list from file
+        for line in alls:
+            allsites.append(line.rstrip()) 
+        
+    with open("reservations.txt", "r") as rezis: #Import reserved sites list from file 
+        for line in rezis:
+            line = line.rstrip()
+            (s,u) = line.split(" ", 1)
+            reserved[(s)]=u # update site dictionary with site as key and person who reved as value
+    available = list(set(allsites) - set(reserved.keys())) 
     def __init__(self, *args, **kwargs):# define a calss that takes an unkmnown number are arguments and keyword arguments 
         tk.Tk.__init__(self, *args, **kwargs)
         tk.Tk.wm_title(self,"CampRezi")
@@ -55,7 +53,7 @@ class StartPage(tk.Frame): # this calss takes tk.Frame as a parent in order to e
         
 class Login(StartPage):
     global authuserinfo
-    authuserinfo = {"username":"", "first":"", "last":"", "phone":""}
+    #authuserinfo = {"username":"", "first":"", "last":"", "phone":""}
     def __init__(self,parent,controller):
         tk.Frame.__init__(self,parent)
         loginLabel = tk.Label(self, text = "Enter your Credietials",bg = "#333333",fg = "#FFFFFF",font=("Ariel",20))# create label in window 
@@ -77,8 +75,6 @@ class Login(StartPage):
     def chklogin(self,cusername,cpassword,controller): # checks login credntials 
         #print(cusername,cpassword)
         accounts = {}
-        global auth_usrInfo
-
         with open("accounts.txt") as auth:
             for line in auth: 
                 (usr,pw) = line.split()# Create tuple of username/pw combo 
@@ -86,10 +82,10 @@ class Login(StartPage):
             pass
         print("\n Login to a CampRezi account, or type exit to return to main\n")
         if cusername not in accounts:
-            mid.error("Looks look that account does not exit, try agin!")
+            error("Looks look that account does not exit, try agin!")
         elif accounts[cusername] == cpassword: #checks username and passwrod againsts known good credentails to allow or stop login 
-            global auth_usr
-            auth_usr = cusername
+            #global auth_usr
+            #auth_usr = cusername
             with open("userinfo.txt","r") as info: #opens the accounts fike to read the new accoun t info
                 users = {} 
                 for line in info: # reading user info file and adding it to dict of users:userinfo
@@ -103,19 +99,18 @@ class Login(StartPage):
                     global auth_usrInfo
                     auth_usrInfo = inf
                     global authuserinfo
-                    authuserinfo = inf            
+                    authuserinfo = inf
+                    #print(authuserinfo)
+                    CampReziApp.auth = auth_usrInfo            
             #print("\n Login Succesful \n")
             #print("Logged in as", auth_usr,"\n")
             #print("lin109",authuserinfo)
             auth.close() # close username and passwrod file
-            auth_usr = AuthUsr(authuserinfo["username"],authuserinfo["first"],authuserinfo["last"],authuserinfo["phone"])
-            Lobby(self,controller)
+            CampReziApp.auth_usr = AuthUsr(authuserinfo["username"],authuserinfo["first"],authuserinfo["last"],authuserinfo["phone"])
             controller.show_frame(Lobby)
         else:
-            mid.error("Wrong password try agin!")
+            error("Wrong password try agin!")
             
-
-
 class NewUser(StartPage):
     def __init__(self,parent,controller):
         tk.Frame.__init__(self,parent)
@@ -134,9 +129,8 @@ class NewUser(StartPage):
         newUN = ttk.Entry(self)
         newPW = ttk.Entry(self, show="*")
     # print(cusername,cpassword)
-        loginBut = ttk.Button(self, text = "Login",command=lambda: [mid.createUsr(newFirst.get(),newLast.get(),newNum.get(),newUN.get(),newPW.get()),mid.loby()]) # run the mkuser fucntion with the information entered into the windo on press of this button , then run the loby function 
+        loginBut = ttk.Button(self, text = "Login",command=lambda: [createUsr(newFirst.get(),newLast.get(),newNum.get(),newUN.get(),newPW.get()),controller.show_frame(Lobby)]) # run the mkuser fucntion with the information entered into the windo on press of this button , then run the loby function 
         back = ttk.Button(self, text = "Back", command=lambda:[controller.show_frame(StartPage)])
-
         mkaccLabel.grid(row = 0, column = 0,columnspan=2,pady = 15)
         mkaccLabel2.grid(row = 1, column = 0,columnspan=2,pady = 15)
         newFirstT.grid(row=2, column=0,pady=15)
@@ -153,10 +147,10 @@ class NewUser(StartPage):
         back.grid(row= 8,column=4)
 class Lobby(Login):
     def __init__(self,parent,controller):
-        auth_usr = AuthUsr(authuserinfo["username"],authuserinfo["first"],authuserinfo["last"],authuserinfo["phone"])
-        print(auth_usr.first)
+        #auth_usr = AuthUsr(authuserinfo["username"],authuserinfo["first"],authuserinfo["last"],authuserinfo["phone"])
+        #print(auth_usr.first)
         tk.Frame.__init__(self,parent)
-        labstr = ("Hello     "+auth_usr.first+"!\n\nWelcome to CampRezi,\n Login or Make an account")
+        labstr = ("Hello     "+ CampReziApp.auth_usr['first']+"!\n\nWelcome to CampRezi,\n Login or Make an account")
         lobLab = tk.Label(self, text =labstr,bg = "#333333",fg = "#FFFFFF", font=("Ariel",20))
         lobBut1 = ttk.Button(self, text = "View Available Sites",command=lambda:[controller.show_frame(View)])
         lobBut2 = ttk.Button(self, text = "New Reservation",command=lambda:[controller.show_frame(New)])
@@ -173,10 +167,10 @@ class Cancel(Lobby):
         tk.Frame.__init__(self,parent)
         canT = tk.Label(self,text="You have reserved the following sites:")
         locX = 1
-        for key,value in reserved.items():
+        for key,value in CampReziApp.reserved.items():
             x = lambda:[auth_usr.username]
             if value==x: # if the site is reserved under the name of the currently loged in user
-                button=tk.Button(self,text=key,command= lambda key=key,value=value:[self.can(key),mid.sucess("Reservation for ",value, "removed.")])
+                button=tk.Button(self,text=key,command= lambda key=key,value=value:[self.can(key),sucess("Reservation for ",value, "removed."),controller.show_frame(Lobby)])
                 locX += 1
                 button.grid(row=2,column=locX)
         canBack = tk.Button(self,text="back", command=lambda:[controller.show_frame(Lobby)])
@@ -186,19 +180,19 @@ class Cancel(Lobby):
     def can(self,deletion):
         print("Cancel Reservation ")
         print(deletion)
-        valid = reserved.get(deletion)
+        valid = CampReziApp.reserved.get(deletion)
         if valid is not None:
             pass
         else:
-            mid.error("Please choose an available site")
-        if deletion in reserved:
-            reserved.pop(deletion) # add reservation to list 
-            available.append(deletion) #remove reservatio nfrom avialable 
+            error("Please choose an available site")
+        if deletion in CampReziApp.reserved:
+            CampReziApp.reserved.pop(deletion) # add reservation to list 
+            CampReziApp.available.append(deletion) #remove reservatio nfrom avialable 
             with open("reservations.txt","w") as rezis: # writes updated reservations dict to reservations file
-                for key,value in reserved.items():
+                for key,value in CampReziApp.reserved.items():
                     rezis.write('%s %s\n' % (key,value))
-            print("Reserved Sites:\n" , reserved)
-            print("Available Sites:\n" , available)
+            print("Reserved Sites:\n" , CampReziApp.reserved)
+            print("Available Sites:\n" , CampReziApp.available)
 
 class View(Lobby):
      def __init__(self,parent,controller):
@@ -208,12 +202,12 @@ class View(Lobby):
         viewWinT2 = tk.Label(self, text="These sites are avaible for reservation:")
         viewWinT2.grid(row=4)
         locX = 1
-        for key in reserved: #create button for each key in reserved sites
+        for key in CampReziApp.reserved: #create button for each key in reserved sites
             locX += 1 # increate the button location number by 1 so thye odnt overlap 
             button = tk.Label(self, text=key, bg="#696969", padx=10)
             button.grid(row=2,column=locX)
         locX = 1
-        for site in available:
+        for site in CampReziApp.available:
             locX += 1
             button = tk.Label(self, text=site,bg="#696969", padx=10)
             button.grid(row=6,column=locX)
@@ -226,14 +220,14 @@ class New(Lobby):
         rwinNewT = tk.Label(self, text="Choose one of the following sites to reserve: ",bg = "#333333",fg = "#FFFFFF",font=("Ariel",20))
         locX = 1
         locY =  1
-        for site in available:
+        for site in CampReziApp.available:
             locX += 1
             if locX % 2 ==0:
-                button = ttk.Button(self, text=site, command=lambda site=site:[self.reserve(site), mid.sucess((site+" reserved successfully")),controller.show_frame(New)])# site=site ensures each button gets a unique value for site 
+                button = ttk.Button(self, text=site, command=lambda site=site:[self.reserve(site), sucess((site+" reserved successfully")),controller.show_frame(Lobby)])# site=site ensures each button gets a unique value for site 
                 button.grid(row=2,column=locX)
             else:
                 locX-=1
-                button = ttk.Button(self, text=site, command=lambda site=site:[self.reserve(site), mid.sucess((site+" reserved successfully")),controller.show_frame(New)])# site=site ensures each button gets a unique value for site 
+                button = ttk.Button(self, text=site, command=lambda site=site:[self.reserve(site), sucess((site+" reserved successfully")),controller.show_frame(Lobby)])# site=site ensures each button gets a unique value for site 
                 button.grid(row=3,column=locX)
                 locX+=1
             
@@ -243,12 +237,12 @@ class New(Lobby):
         rwinBack.grid(row=5)
         
     def reserve(self,site): # reserve will be able to input the day they want to reserve and it will be stored in a dictionary in a file local to the program 
-        available.remove(site) # add reservation to list 
-        reserved[site]=auth_usr.username #remove reservatio nfrom avialable 
-        print("Reserved Sites:\n" , reserved)
-        print("Available Sites:\n" , available)
+        CampReziApp.available.remove(site) # add reservation to list 
+        CampReziApp.reserved[site]=CampReziApp.auth_usr.username #remove reservatio nfrom avialable 
+        print("Reserved Sites:\n" , CampReziApp.reserved)
+        print("Available Sites:\n" , CampReziApp.available)
         with open("reservations.txt","a") as rezis: 
-            a = reserved[site] 
+            a = CampReziApp.reserved[site] 
             rezis.write('%s %s\n' % (site,a))
 
 class AuthUsr:
@@ -257,8 +251,60 @@ class AuthUsr:
         self.first = first
         self.last = last
         self.phone = phone
+        
+        
+def error(message): # this can be called when a user makes an incorrect inout. pass the error message to this fucntion when calling it 
+    errorW = tk.Toplevel()
+    errorlab= tk.Label(errorW, text = message,bg = "#333333",fg = "#FFFFFF", font=("Ariel",20))
+    okBut = ttk.Button(errorW, text = "Try again.",command= errorW.destroy)
+    errorlab.grid(row = 0, column = 0,columnspan= 2, sticky = "news",pady=20,padx = 30)
+    okBut.grid(row = 1, column = 0,pady=20,padx=40)
 
 
+def sucess(message):
+    successW = tk.Toplevel()
+    successW.title("YAY!")
+    successW.configure(bg = "#333333")
+    sframe = tk.Frame(bg = "#333333")
+    successlab= tk.Label(successW, text = message,bg = "#333333",fg = "#FFFFFF", font=("Ariel",20))
+    okBut = ttk.Button(successW, text = "Back.",command= successW.destroy)
+    successlab.grid(row = 0, column = 0,columnspan= 2, sticky = "news",pady=20,padx = 30)
+    okBut.grid(row = 1, column = 0,pady=20,padx=40)
+    sframe.pack(expand = True, fill="both")
+    successW.mainloop()
+
+
+def createUsr(first,last,num,un,pasw):  # these variables are passed to this fucntion form the create account window in the new user function 
+    accounts = {}
+    with open("accounts.txt") as auth:
+        for line in auth:
+            (usr,pw) = line.split()# Create tuple of username/pw combo 
+            accounts[(usr)] = pw #break the tuple in to doctiuonary key,value
+        pass
+    breaker = True
+    while breaker == True:
+        nusername = un
+        npassword = pasw
+        if nusername in accounts:
+            error("Looks look that account already exits, try agin!")
+        else:
+            global auth_usr
+            auth_usr = nusername
+            accounts[nusername] = npassword
+            with open("accounts.txt","w") as auth: #opens the accounts fike to write the new useres accou nt to the master accounts file 
+                for key, value in accounts.items():
+                    auth.write('%s %s\n' % (key, value))
+            with open("userinfo.txt", "a") as info:
+                uInfo = {}
+                uInfo['username'] = auth_usr
+                uInfo['first'] = first
+                uInfo['last'] = last
+                uInfo['phone'] = num
+                info.write('%s %s\n' % (auth_usr, uInfo)) # write the collected user info to the userinfo file 
+                auth_usrInfo = uInfo # the acount that was jsut created is now the authrized user 
+                CampReziApp.auth = uInfo
+            print("Your Info : \n Name: ", auth_usrInfo["first"],auth_usrInfo["last"], "\nContact Numnber: ", auth_usrInfo['phone'])
+            print("Account creation sucessfull. Logged in as: ", auth_usrInfo['username'],"\n")
+            break
 app= CampReziApp()
 app.mainloop()
-print("the user is",auth_usr.first)

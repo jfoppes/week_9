@@ -124,7 +124,7 @@ def login(): #exisiting useres login window
 
 
     lframe.pack()
-    loginW.mainloop()### This is a blocking function nothing after this line will run untill mainloops is loginW is destroyed '''
+    loginW.mainloop()### This is a blocking function nothing after this line will run untill mainloops is loginW is destroyed 
 def chklogin(cusername,cpassword): # checks login credntials 
     #print(cusername,cpassword)
     accounts = {}
@@ -137,7 +137,7 @@ def chklogin(cusername,cpassword): # checks login credntials
         pass
     print("\n Login to a CampRezi account, or type exit to return to main\n")
     if cusername not in accounts:
-        error("Looks look that account does not exit, try agin!")
+        Popup.error("Looks look that account does not exit, try agin!")
     elif accounts[cusername] == cpassword: #checks username and passwrod againsts known good credentails to allow or stop login 
         global auth_usr
         auth_usr = cusername
@@ -159,7 +159,7 @@ def chklogin(cusername,cpassword): # checks login credntials
         auth.close() # close username and passwrod file
     else:
         error("Wrong password try agin!")
-    
+    '''
 '''def createUsrWin(): # New users create accounts
     global mkaccW
     mkaccW = tkinter.Tk()# define login window 
@@ -213,7 +213,7 @@ def createUsr(first,last,num,un,pasw):  # these variables are passed to this fuc
         nusername = un
         npassword = pasw
         if nusername in accounts:
-            error("Looks look that account already exits, try agin!")
+            Popup.error("Looks look that account already exits, try agin!")
         else:
             global auth_usr
             auth_usr = nusername
@@ -325,7 +325,7 @@ def cancel(deletion):
     if valid is not None:
         pass
     else:
-        error("Please choose an available site")
+        Popup.error("Please choose an available site")
     if deletion in reserved:
         reserved.pop(deletion) # add reservation to list 
         available.append(deletion) #remove reservatio nfrom avialable 
@@ -337,26 +337,5 @@ def cancel(deletion):
         time.sleep(1)
         
     else:
-        error("Please enter a valid choice")
+        Popup.error("Please enter a valid choice")
 
-def error(message): # this can be called when a user makes an incorrect inout. pass the error message to this fucntion when calling it 
-    errorW = tkinter.Toplevel()
-    errorlab= tkinter.Label(self, text = message,bg = "#333333",fg = "#FFFFFF", font=("Ariel",20))
-    okBut = tkinter.Button(self, text = "Try again.",command= errorW.destroy)
-    errorlab.grid(row = 0, column = 0,columnspan= 2, sticky = "news",pady=20,padx = 30)
-    okBut.grid(row = 1, column = 0,pady=20,padx=40)
-
-
-    
-def sucess(message):
-    successW = tkinter.Toplevel()
-    successW.title("YAY!")
-    successW.geometry("")
-    successW.configure(bg = "#333333")
-    sframe = tkinter.Frame(bg = "#333333")
-    successlab= tkinter.Label(sframe, text = message,bg = "#333333",fg = "#FFFFFF", font=("Ariel",20))
-    okBut = tkinter.Button(sframe, text = "Back.",command= successW.destroy)
-    successlab.grid(row = 0, column = 0,columnspan= 2, sticky = "news",pady=20,padx = 30)
-    okBut.grid(row = 1, column = 0,pady=20,padx=40)
-    sframe.pack(expand = True, fill="both")
-    successW.mainloop()
