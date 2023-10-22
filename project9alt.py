@@ -1,6 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-import midterm as mid
 import os
 import json
 
@@ -31,7 +30,7 @@ class CampReziApp(tk.Tk): # this is the parent class for the application itself,
         container.grid_rowconfigure(0, weight=1)
         container.grid_columnconfigure(0, weight=1)
         self.frames={}
-        for f in (StartPage, Login, NewUser, Lobby, View, New, Cancel):#n add the frames within each of these calsses to the frames Dict to be called upon wehn the class is called 
+        for f in (StartPage, Login, NewUser, Lobby, View, New, Cancel):#n add the frames within each of these classes to the frames Dict to be called upon wehn the class is called 
             frame = f(container,self)
             self.frames[f]=frame 
             frame.grid(row=0,column=0,sticky="nsew")
@@ -101,7 +100,7 @@ class Login(StartPage):
                     global authuserinfo
                     authuserinfo = inf
                     #print(authuserinfo)
-                    CampReziApp.auth = auth_usrInfo            
+                    CampReziApp.auth = auth_usrInfo  # this is where the authorized user info is meant to be stored in a class attribute. i also tried doing this is aglobal varible by having    inf= a global variable but that also did not work       
             #print("\n Login Succesful \n")
             #print("Logged in as", auth_usr,"\n")
             #print("lin109",authuserinfo)
@@ -245,7 +244,7 @@ class New(Lobby):
             a = CampReziApp.reserved[site] 
             rezis.write('%s %s\n' % (site,a))
 
-class AuthUsr:
+class AuthUsr: # this was crearted in an attempt to pass authorized suer info from the chklogin function  to created a Authuser object, but i couln not make this work 
     def __init__(self,username,first,last,phone):
         self.username = username
         self.first = first
@@ -254,7 +253,7 @@ class AuthUsr:
         
         
 def error(message): # this can be called when a user makes an incorrect inout. pass the error message to this fucntion when calling it 
-    errorW = tk.Toplevel()
+    errorW = tk.Toplevel() # toiplevel window makes a popup that doent affect the master/root window 
     errorlab= tk.Label(errorW, text = message,bg = "#333333",fg = "#FFFFFF", font=("Ariel",20))
     okBut = ttk.Button(errorW, text = "Try again.",command= errorW.destroy)
     errorlab.grid(row = 0, column = 0,columnspan= 2, sticky = "news",pady=20,padx = 30)
